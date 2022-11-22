@@ -1,0 +1,20 @@
+{% extends "base/main.html" %}
+
+    
+{% block content %}
+{% if request.user == room.host %}
+    <form method = "POST" action="">
+        {% csrf_token %}
+        Do you really want to delete this content?
+        <br>
+        <a href="{% url 'home' %}">No</a>
+        <br>
+        <button type = "submit">Delete</button>
+    </form>
+{% else %}
+    You are not allowed to edit this page
+{% endif %}
+
+
+{% endblock content %}
+    
