@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 # Create your views here.
 
 def loginPage(request):
@@ -79,6 +80,14 @@ def room(request, pk):
     context = {'room':room, 'msgs': msgs, 'participants':participants, 'topics':topics}
     return render(request, 'base/room.html', context)
 
+def userProfile(request, pk):
+    user = User.objects.get(id=pk)
+    rooms = user.room_set.all()
+    topics = Topic.objects.all() 
+    msgs = Message.objects.filter(user=request.user)
+    context = {'user':user, 'rooms':rooms, 'msgs':msgs, 'topics':topics}
+    return render(request, 'base/profile.html', context)
+
 @login_required(login_url='login')
 def createRoom(request):
     form = RoomForm
@@ -94,18 +103,24 @@ def createRoom(request):
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
-    if request.method == "POST":
-        form = RoomForm(request.POST, instance=room)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
+    if request.user == room.host:
+        if request.method == "POST":
+            form = RoomForm(request.POST, instance=room)
+            if form.is_valid():
+                form.save()
+                return redirect('home')
+    else:
+        return Http404
     context = {'form':form}
     return render(request, 'base/room_form.html', context)
 
 @login_required(login_url='login')
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
-    if request.method == "POST":
-        room.delete()
-        return redirect('home')
+    if request.user == room.host:
+        if request.method == "POST":
+            room.delete()
+            return redirect('home')
+    else:
+        return Http404
     return render(request, 'base/room_delete.html')

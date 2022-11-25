@@ -13,7 +13,7 @@
     <br>
     <br>
         {% for room in rooms %}
-            @<span>{{room.host.username}}</span><br>
+            @<a href="{% url 'profile' room.host.id %}">{{room.host.username}}</a><br>
             <strong><a href="{% url 'room' room.id %}">{{room.name}}</a></strong>
             <br>
             {% if request.user == room.host %}

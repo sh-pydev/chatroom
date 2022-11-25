@@ -7,9 +7,10 @@ urlpatterns = [
     path('register/', registerPage, name='register'),
     
     path('', home, name='home'),
+    path('profile/<int:pk>/', userProfile, name='profile'),
     
     path('create_room', createRoom, name='create_room'),
-    path('update_room/<int:pk>', updateRoom, name='update_room'),
-    path('rooms/<int:pk>', room, name='room'),
-    path('delete_room/<int:pk>', deleteRoom, name='delete_room'),
+    path('update_room/<int:pk>/', updateRoom, name='update_room'),
+    path('rooms/<int:pk>/', room, name='room'),
+    path('delete_room/<int:pk>/', deleteRoom, name='delete_room'),
 ]
